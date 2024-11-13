@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <!-- 引入刚刚下载的 ECharts 文件 -->
+    <script src="../static/js/echarts.min.js"></script>
+  </head>
+    <body>
+    <div id="temperature" style="width: 600px;height:400px;"></div>
+    <div id="humidity" style="width: 600px;height:400px;"></div>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var temperatureChart = echarts.init(document.getElementById('temperature'));
+        var humidityChart = echarts.init(document.getElementById('humidity'));
+        
+
+        // 从 Flask 传递的变量中获取数据
+        var airList = JSON.parse('{{ air_list | tojson | safe }}');
+        var dateList = JSON.parse('{{ date_list | tojson | safe }}');
+        var humidityList = JSON.parse('{{ humidity_list | tojson | safe }}');
+        var temperatureList = JSON.parse('{{ temperature_list | tojson | safe }}');
+        var weatherList = JSON.parse('{{ weather_list | tojson | safe }}');
+        var windSpeedList = JSON.parse('{{ wind_speed_list | tojson | safe }}');
+        var nightTemperatureList = JSON.parse('{{ night_temperature_list | tojson | safe }}');
+        var city = '{{ city }}';
+        var aqi_list = JSON.parse('{{ aqi_list | tojson | safe }}');
+        var pm2_5_list = JSON.parse('{{ pm2_5_list | tojson | safe }}');
+        var pm10_list = JSON.parse('{{ pm10_list | tojson | safe }}');
+        var o3_list = JSON.parse('{{ o3_list | tojson | safe }}');
+        
+        // 使用 JavaScript 打印数据
+        console.log('Air Quality:', airList);
+        console.log('Dates:', dateList);
+        console.log('Humidity:', humidityList);
+        console.log('Temperature:', temperatureList);
+        console.log('Weather:', weatherList);
+        console.log('Wind Speed:', windSpeedList);
+        console.log('Night Temperature:', nightTemperatureList);
+
+  
+        // 指定图表的配置项和数据
+        var temperatureOption = {
+          title: {
+            text: '普洱市一周温度'
+          },
+          tooltip: {
+
+          },
+          legend: {
+            data: ['温度']
+          },
+          xAxis: {
+            data: dateList
+          },
+          yAxis: {},
+          series: [
+            {
+              name: '白天温度',
+              type: 'line',
+              data: temperatureList
+            },
+            {
+              name: '夜晚温度',
+              type: 'line',
+              data: nightTemperatureList
+            }
+          ]
+        };
+        // 指定图表的配置项和数据
+        var humidityOption = {
+          title: {
+            text: '普洱市一周湿度'
+          },
+          tooltip: {
+
+          },
+          legend: {
+            data: ['湿度']
+          },
+          xAxis: {
+            data: dateList
+          },
+          yAxis: {},
+          series: [
+            {
+              name: '湿度',
+              type: 'bar',
+              data: humidityList
+            }
+          ]
+        };
+  
+        // 使用刚指定的配置项和数据显示图表。
+        temperatureChart.setOption(temperatureOption);
+        humidityChart.setOption(humidityOption);
+      </script>
+      <table border="1">
+        <tr>
+            <th>日期</th>
+            <th>地点</th>
+            <th>空气质量</th>
+            <th>天气</th>
+            <th>AQI</th>
+            <th>PM2.5</th>
+            <th>PM10</th>
+            <th>O3</th>
+        </tr>
+        {% for item in date_list %}
+        <tr>
+            <td>{{ item }}</td>
+            <td>{{ city }}</td>
+            <td>{{ air_list[loop.index0] }}</td>
+            <td>{{ weather_list[loop.index0] }}</td>
+            <td>{{ aqi_list[loop.index0] }}</td>
+            <td>{{ pm2_5_list[loop.index0] }}</td>
+            <td>{{ pm10_list[loop.index0] }}</td>
+            <td>{{ o3_list[loop.index0] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+  </body>
+</html>
